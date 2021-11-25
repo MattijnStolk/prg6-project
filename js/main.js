@@ -1,4 +1,5 @@
 //to start db run "C:\Program Files\MongoDB\Server\5.0\bin\mongod.exe"
+//or on linux "sudo systemctl start mongod"
 const express = require('express')
 const env = require('dotenv')
 const mongoose = require('mongoose')
