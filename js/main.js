@@ -1,12 +1,14 @@
 const express = require('express')
 const env = require('dotenv')
+const mongoose = require('mongoose')
+
+console.log('starting up webservice')
 
 app = express()
 
 app.get('/', function (req, res) {
-    res.send('hello world')
+    res.header("Content-Type", "application/json")
+    res.send('{"message": "hello world"}')
   })
 
-console.log('starting up')
-
-app.listen(8080)
+app.listen(8000)
