@@ -2,16 +2,22 @@
 const express = require('express')
 const env = require('dotenv')
 const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
 
 mongoose.connect('mongodb://localhost/notes')
+app = express()
 
 console.log('starting up webservice')
 
-app = express()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extendedparser: true, extended:true } ))
+
+let notesRouter = require('../routes/notesRoutes.js')();
 
 app.get('/', function (req, res) {
     res.header("Content-Type", "application/json")
     res.send('{"message": "hello world"}')
   })
 
+app.use('/api', notesRouter)
 app.listen(8000)
