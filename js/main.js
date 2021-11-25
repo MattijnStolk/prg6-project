@@ -2,6 +2,8 @@ const express = require('express')
 const env = require('dotenv')
 const mongoose = require('mongoose')
 
+mongoose.connect('mongodb://localhost/')
+
 console.log('starting up webservice')
 
 app = express()
