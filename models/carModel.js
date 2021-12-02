@@ -8,8 +8,7 @@ let carModel = new Schema(
             type : String,
             required: true
         },
-        car : {
-            brand : {
+        brand : {
                 type : String,
                 required: true
             },
@@ -20,7 +19,6 @@ let carModel = new Schema(
             modifications : {
                 type : String
             }
-        }
         
     }
 )
