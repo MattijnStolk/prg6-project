@@ -4,12 +4,17 @@ const express = require('express')
 const env = require('dotenv')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const notesRouter = require('../routes/notesRoutes.js')();
+const carRouter = require('./routes/carRouter.js')();
 
-mongoose.connect('mongodb://localhost/notes')
+mongoose.connect('mongodb://localhost/car')
 app = express()
 
 console.log('starting up webservice')
+
+const db = mongoose.connection
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('Connected to Database'))
+
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extendedparser: true, extended:true } ))
@@ -19,6 +24,6 @@ app.get('/', function (req, res) {
     res.send('{"message": "hello world"}')
   })
 
-app.use('/api', notesRouter)
+app.use('/api', carRouter)
 
 app.listen(8000)
