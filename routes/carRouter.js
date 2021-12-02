@@ -13,16 +13,26 @@ let routes = function() {
     })
 
     carRouter.route('/cars') //in de browser is dit dus /api/cars
-        .post(function(req,res) {
-            let car = new Car(req.body);
-            car.save(function (err) {
-                try {
-                    res.status(201).send(car) 
-                } catch (err) {
-                    res.status(400).json({message: err.message })
-                }
-
-            })
+        .post(async function(req,res) {
+            let car = new Car({
+                owner : req.body.owner,
+                brand : req.body.brand,
+                model : req.body.model,
+                modifications : req.body.modifications
+            });
+            try{
+                const newCar = await car.save();
+                res.status(201).json(newCar)
+            }catch(err){
+                res.status(400).json({message: err})
+            }
+            // car.save(function (err) {
+            //     try {
+            //         res.status(201).send(car) 
+            //     } catch (err) {
+            //         res.status(400).json({message: err.message })
+            //     }
+            //})
         })
         .get(function (req, res) {
             Car.find({}, function (err, cars) {
@@ -33,39 +43,39 @@ let routes = function() {
                     let items = []
                     for (let car of cars){
                         let item = car.toJSON();
-                        // item = {
-                        //     "_links" : {href : `http://${req.headers.host}/api/cars`,
-                        //     "pagination": {
-                        //     "temp": "pagination maken we later af"
-                        //      }
-                        //     }
-                        // }
                         item._links = {
-                            self : {href : `http://${req.headers.host}/api/cars`}
-                        }
-                        item.pagination = {
-                            temp: "pagination maken we later af"
+                            self : {href : `http://${req.headers.host}/api/cars/${car.id}`},
+                            collection : {href : `http://${req.headers.host}/api/cars`}
                         }
                         items.push(item)
                     }
-                    res.json(items)
+                    let collections = {
+                        items : items,
+                        _links : {
+                            self : {href : `http://${req.headers.host}/api/cars`}
+                        },
+                        pagination : {
+                            temp : "tbd"
+                        }
+                    }
+                    res.json(collections)
                 }
-            })
+        })
         })
 
-        carRouter.route('/cars/:id')
+        carRouter.route('/cars/:id') // in je browser is dit dus /api/cars/{id}
             .get(async function(req, res){
                 try{
                     let car = await Car.findById(req.params.id)
                     let carJson = car.toJSON()
 
                     carJson._links = {
-                        self : {href : `http://${req.headers.host}/api/cars/${req.params.id}`}
+                        self : {href : `http://${req.headers.host}/api/cars/${req.params._id}`}
                     }
 
                     res.json(carJson)
-                }catch{
-                    res.send(404).json({ message: err.message})
+                }catch(err){
+                    res.status(404).json({ message: err})
                 }
                 
             })
@@ -77,7 +87,7 @@ let routes = function() {
                     res.send(500).json({ message: err.message})
                 }
             })
-            .patch(getCar, async function(req, res){
+            .put(getCar, async function(req, res){
                 if(req.body.owner != null){
                     res.car.owner = req.body.owner
                 }
