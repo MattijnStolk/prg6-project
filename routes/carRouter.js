@@ -16,6 +16,9 @@ let routes = function() {
         .options(async function(req,res){
             res.status(200)
             .header("Allow", "GET,POST,OPTIONS")
+            .header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+            .header("Access-Control-Allow-Origin", "*")
+            .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
             //.header("Content-Type", "application/json")
             .send()
         })
@@ -28,7 +31,10 @@ let routes = function() {
             });
             try{
                 const newCar = await car.save();
-                res.status(201).json(newCar)
+                res.status(201)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+                .json(newCar)
             }catch(err){
                 res.status(400).json({message: err})
             }
@@ -57,7 +63,10 @@ let routes = function() {
                             temp : "tbd"
                         }
                     }
-                    res.json(collections)
+                    res.status(200)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+                    .json(collections)
                 }
         })
         })
@@ -67,6 +76,7 @@ let routes = function() {
                 res.status(200)
                 .header("Allow", "GET,OPTIONS,DELETE,PUT")
                 .header("Content-Type", "application/json")
+                .header("Access-Control-Allow-Methods", "GET,OPTIONS,DELETE,PUT")
                 .send()
             })
             .get(async function(req, res){
@@ -80,6 +90,8 @@ let routes = function() {
                     }
 
                     res.status(200)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
                     .header("Content-Type", "application/json")
                     .json(carJson)
                 }catch(err){
