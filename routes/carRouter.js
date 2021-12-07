@@ -26,13 +26,6 @@ let routes = function() {
             }catch(err){
                 res.status(400).json({message: err})
             }
-            // car.save(function (err) {
-            //     try {
-            //         res.status(201).send(car) 
-            //     } catch (err) {
-            //         res.status(400).json({message: err.message })
-            //     }
-            //})
         })
         .get(function (req, res) {
             Car.find({}, function (err, cars) {
@@ -49,7 +42,7 @@ let routes = function() {
                         }
                         items.push(item)
                     }
-                    let collections = {
+                    let collection = {
                         items : items,
                         _links : {
                             self : {href : `http://${req.headers.host}/api/cars`}
@@ -58,7 +51,7 @@ let routes = function() {
                             temp : "tbd"
                         }
                     }
-                    res.json(collections)
+                    res.json(collection)
                 }
         })
         })
