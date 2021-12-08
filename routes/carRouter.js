@@ -19,7 +19,6 @@ let routes = function() {
             .header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
             .header("Access-Control-Allow-Origin", "*")
             .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-            //.header("Content-Type", "application/json")
             .send()
         })
         .post(async function(req,res) {
@@ -58,9 +57,9 @@ let routes = function() {
                         items : items,
                         _links : {
                             self : {href : `http://${req.headers.host}/api/cars`}
-                        },
+                        },                        
                         pagination : {
-                            temp : "tbd"
+                           temp : "tbd"
                         }
                     }
                     res.status(200)
@@ -108,8 +107,6 @@ let routes = function() {
                 }
             })
             .put(getCar, async function(req, res){
-                console.log(res.car)
-                console.log(req.body)
                 if(req.body.owner != null){
                     res.car.owner = req.body.owner
                 }
