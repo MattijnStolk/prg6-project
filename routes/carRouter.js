@@ -44,30 +44,119 @@ let routes = function() {
                     res.status(500).send(err)
                 }
                 else{
-                    let items = []
-                    for (let car of cars){
-                        let item = car.toJSON();
-                        item._links = {
-                            self : {href : `http://${req.headers.host}/api/cars/${car.id}`},
-                            collection : {href : `http://${req.headers.host}/api/cars`}
-                        }
-                        items.push(item)
+                    //begin pagination
+                    let start;
+                    let limit;
+
+                    if (req.query.start && req.query.limit) {
+                        start = parseInt(req.query.start);
+                        limit = parseInt(req.query.limit);
+                        console.log("Querystrings were given");
                     }
+                    else
+                    {
+                        start = 1;
+                        limit = cars.length
+                        console.log("No querystrings were given");
+                    }
+
+                    let totalItems = cars.length;
+                    let totalPages = Math.ceil(cars.length / limit);
+                    
+                    let firstPage;
+                    let lastPage;
+                    let prevPage;
+                    let nextPage;
+
+                    let currentItems;
+                    let currentPage;
+
+                    if (totalPages == 1) {
+                        firstPage = lastPage = prevPage = nextPage = currentPage = 1;
+                        currentItems = cars.length;
+                    }
+
+                    else
+                    {
+                        currentPage = Math.ceil(start / limit);
+                        console.log(currentPage);
+                        // currentItems
+                        if (currentPage == totalPages) { currentItems = totalItems - ((totalPages-1) * limit) } 
+                            else { currentItems = limit }
+
+                        firstPage = 1;
+                        lastPage = (totalPages-1) * limit + 1;
+
+                        // prevPage
+                        if (currentPage == 1) { prevPage = 1 } 
+                            else { prevPage = start - limit }
+                        // nextPage
+                        if (currentPage == totalPages) { nextPage = start }
+                            else { nextPage = start + limit }
+                        
+                    }
+
                     let collection = {
-                        items : items,
-                        _links : {
-                            self : {href : `http://${req.headers.host}/api/cars`}
-                        },                        
-                        pagination : {
-                           temp : "tbd"
+                        "items" : [],
+                        "_links" : {
+                            "self" : { "href" : `http://${req.headers.host}/api/cars` },
+                            "collection" : { "href" : `http://${req.headers.host}/api/cars` }
+                        },
+                        "pagination" : {
+                            "currentPage": currentPage,
+                            "currentItems" : currentItems,
+                            "totalPages" : totalPages,
+                            "totalItems" : totalItems,
+                            "_links" : {
+                                "first" : {
+                                    "page" : 1,
+                                    "href" : `http://${req.headers.host}/api/cars?start=${firstPage}&limit=${limit}`
+                                },
+                                "last" : {
+                                    "page" : 1,
+                                    "href" : `http://${req.headers.host}/api/cars?start=${lastPage}&limit=${limit}`
+                                },
+                                "previous" : {
+                                    "page" : 1,
+                                    "href" : `http://${req.headers.host}/api/cars?start=${prevPage}&limit=${limit}`
+                                },
+                                "next" : {
+                                    "page" : 1,
+                                    "href" : `http://${req.headers.host}/api/cars?start=${nextPage}&limit=${limit}`
+                                }
+                            } 
                         }
                     }
+                    let carsOnPage = [];
+                    if (totalPages == 1) {
+                        carsOnPage = cars
+                    } 
+                    else{
+                        let startSlice = start - 1;
+                        let endSlice = start + limit - 1;
+                        carsOnPage = cars.slice(startSlice, endSlice)
+                        console.log("THIS ONE SHOULD BE EXECUTED");
+                    }
+
+                    for(let car of carsOnPage){
+                        let carJson = car.toJSON()
+
+                        carJson._links = {
+                            "self" : { "href" : `http://${req.headers.host}/api/cars/${carJson._id}` },
+                            "collection" : { "href" : `http://${req.headers.host}/api/cars` }
+                        },
+
+
+                        // Add car json to the collection 
+                        collection.items.push(carJson)
+                    }
+
                     res.status(200)
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-                    .json(collections)
+                    .json(collection)
                 }
-        })
+            })
         })
 
         carRouter.route('/cars/:id') // in je browser is dit dus /api/cars/{id}
