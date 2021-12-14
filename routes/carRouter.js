@@ -51,7 +51,6 @@ let routes = function() {
                     if (req.query.start && req.query.limit) {
                         start = parseInt(req.query.start);
                         limit = parseInt(req.query.limit);
-                        console.log("Querystrings were given");
                     }
                     else
                     {
@@ -79,18 +78,15 @@ let routes = function() {
                     else
                     {
                         currentPage = Math.ceil(start / limit);
-                        console.log(currentPage);
-                        // currentItems
                         if (currentPage == totalPages) { currentItems = totalItems - ((totalPages-1) * limit) } 
                             else { currentItems = limit }
 
                         firstPage = 1;
                         lastPage = (totalPages-1) * limit + 1;
 
-                        // prevPage
                         if (currentPage == 1) { prevPage = 1 } 
                             else { prevPage = start - limit }
-                        // nextPage
+
                         if (currentPage == totalPages) { nextPage = start }
                             else { nextPage = start + limit }
                         
@@ -135,7 +131,6 @@ let routes = function() {
                         let startSlice = start - 1;
                         let endSlice = start + limit - 1;
                         carsOnPage = cars.slice(startSlice, endSlice)
-                        console.log("THIS ONE SHOULD BE EXECUTED");
                     }
 
                     for(let car of carsOnPage){
@@ -145,9 +140,7 @@ let routes = function() {
                             "self" : { "href" : `http://${req.headers.host}/api/cars/${carJson._id}` },
                             "collection" : { "href" : `http://${req.headers.host}/api/cars` }
                         },
-
-
-                        // Add car json to the collection 
+                        
                         collection.items.push(carJson)
                     }
 
