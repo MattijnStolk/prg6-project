@@ -92,7 +92,8 @@ let routes = function() {
                         
                     }
 
-                    let collection = {
+                    let collection =
+                        {
                         "items" : [],
                         "_links" : {
                             "self" : { "href" : `http://${req.headers.host}/api/cars` },
@@ -139,7 +140,7 @@ let routes = function() {
                         carJson._links = {
                             "self" : { "href" : `http://${req.headers.host}/api/cars/${carJson._id}` },
                             "collection" : { "href" : `http://${req.headers.host}/api/cars` }
-                        },
+                        }
                         
                         collection.items.push(carJson)
                     }
@@ -183,7 +184,7 @@ let routes = function() {
             .delete(getCar, async function(req, res){
                 try {
                     await res.car.remove()
-                    res.status(204).json({ message: 'user deleted' })
+                    res.status(204).json({ message: 'car successfully deleted' })
                 } catch (err) {
                     res.send(500).json({ message: err.message})
                 }
